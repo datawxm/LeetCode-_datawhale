@@ -34,6 +34,33 @@ chatgpt是非常好的算法老师。
 附上本节刷题的记录吧～
 ![alt text](image-1.png)
 
+## 习题讨论
+771. 宝石与石头
+
+ 给你一个字符串 jewels 代表石头中宝石的类型，另有一个字符串 stones 代表你拥有的石头。 stones 中每个字符代表了一种你拥有的石头的类型，你想知道你拥有的石头中有多少是宝石。
+
+字母区分大小写，因此 "a" 和 "A" 是不同类型的石头。
+
+```python
+class Solution:
+    # 哈希集合
+    def numJewelsInStones(self, jewels: str, stones: str) -> int:
+        jewels_set = set(jewels)
+        return sum(s in jewels_set for s in stones)
+    
+    # 暴力解法
+    def numJewelsInStones(self, jewels: str, stones: str) -> int:
+        return sum(s in jewels for s in stones)
+```
+Q1：两种解法有什么区别？为什么不可以直接做 s in jewels的判定，而要将jewels转为set？
+
+A1：in的操作对str的时间复杂度是O(n)，对set的时间复杂度是O(1)，如果str特别长，直接做s in str 可能效率会比较低，不过该题中，因为jewels比较短，在最终的评估中直接用s in str反而耗时更短。
+
+Q2：return sum(s in jewels_set for s in stones)这段代码是在做什么？有什么相关的知识点？ --生成器表达式
+
+A2：1. 使用了Python的生成器表达式和sum函数，对stones中每一个元素依次进行s in jewels_set的运算，然后sum函数会将序列中的所有元素相加；
+2. 在表达式sum(s in jewels_set for s in stones)中，(s in jewels_set for s in stones)是一个生成器表达式。这个生成器表达式会生成一个迭代器，这个迭代器在每次迭代时，都会计算并产生一个新的值，这个值是布尔值，表明s是否在jewels_set中，然后，sum函数会使用这个迭代器，通过不断调用next方法，来获取并累加所有的值。
+
 ## 本节思考
 - 关于知识点：数据结构的分类、算法的特性等、算法复杂度。
 - 关于练习题：还是要在刷题中多思考数据结构与算法，优化时间复杂度和空间复杂度，如：对于二维数组accounts(m * n)，max(sum(row) for row in accounts)的时间复杂度是O(mn)。
