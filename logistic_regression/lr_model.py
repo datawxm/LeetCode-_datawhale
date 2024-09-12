@@ -1,35 +1,31 @@
-import tensorflow as tf
-from sklearn.datasets import load_iris
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
+import numpy as np
 
-# 加载数据
-iris = load_iris()
-X = iris.data
-y = iris.target
+# 生成一些示例数据
+np.random.seed(0)
+X = 2 * np.random.rand(100, 1)
+y = 4 + 3 * X + np.random.randn(100, 1)
 
-# 数据预处理
-scaler = StandardScaler()
-X = scaler.fit_transform(X)
-y = tf.keras.utils.to_categorical(y, 3)
+# 添加偏置列到特征矩阵
+X_b = np.c_[np.ones((100, 1)), X]
 
-# 分割数据集
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# 超参数
+learning_rate = 0.1
+n_iterations = 1000
+m = 100
 
-# 创建顺序模型
-model = tf.keras.Sequential()
+# 初始化权重
+theta = np.random.randn(2, 1)
 
-# 添加层
-model.add(tf.keras.layers.Dense(units=64, activation='relu', input_shape=(X_train.shape[1],)))
-model.add(tf.keras.layers.Dense(units=3, activation='softmax'))
+# 梯度下降
+for iteration in range(n_iterations):
+    gradients = 2/m * X_b.T.dot(X_b.dot(theta) - y)
+    theta = theta - learning_rate * gradients
 
-# 编译模型
-model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+print("权重和偏置:", theta)
 
-# 训练模型
-model.fit(X_train, y_train, epochs=50, batch_size=16, validation_split=0.2)
+# 预测
+X_new = np.array([[0], [2]])
+X_new_b = np.c_[np.ones((2, 1)), X_new]
+y_predict = X_new_b.dot(theta)
 
-# 评估模型
-loss, accuracy = model.evaluate(X_test, y_test)
-print(f'Test Loss: {loss}')
-print(f'Test Accuracy: {accuracy}')
+print("预测值:", y_predict)
